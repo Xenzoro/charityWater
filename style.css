@@ -315,12 +315,32 @@ a:visited, a:focus, a:hover {
   text-shadow: 2px 2px 4px rgba(14, 14, 14, 0.3);
 }
 
-@media only screen and (max-width: 1000px) {
-  .button-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+/* Responsive and centered navbar logo */
+.navbar-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.navbar-brand img {
+  max-width: 320px; /* Increased from 180px for regular screens */
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .navbar-brand img {
+    max-width: 140px;
   }
 }
+
+/*@media only screen and*/
