@@ -1,47 +1,43 @@
-# charity: water – Water Quest Game Starter
+# Aqua Blaster – charity: water Arcade Game
 
-In this game, users tap charity: water’s signature yellow jerry cans as fast as they can to earn points. You’ll be working from a partially built version of the game. Some functionality is already provided, and your job is to complete the rest.
+Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission. Hit as many clean water targets as you can, avoid dirty water, and rack up points before time runs out!
 
-## What’s Already Done
+## Features
 
-The starter files already include:
+- **Charity: water branding**: Uses official logo, color palette, and modern arcade-inspired design.
+- **Responsive UI**: Layout adapts for desktop and mobile, with all controls and stats easily accessible.
+- **Game grid**: 4x3 grid where targets (clean and dirty) appear randomly.
+- **Custom cursor**: Water gun PNG cursor appears only inside the game area for immersive play.
+- **Sound effects**: All sound effects are copyright free and sourced from the YouTube Audio Library (see `wav/`).
+- **Dynamic HUD**: Displays score, timer, and lives (💧 icons).
+- **Pause and How to Play**: Pause/resume the game and view instructions via Bootstrap modals.
+- **Game Over modal**: Shows your final score and a themed message when the game ends.
+- **Animated feedback**: Hit targets show different images based on accuracy; confetti on high scores.
+- **Water facts**: Spend points to unlock real-world water facts.
 
-- A **heading and tagline**
-- A **start button**
-- A **game container** displaying a grid
-- A **placeholder timer and score** (not functional yet)
-- A **logo image** from charity: water
-- Working code that:
-  - Starts the game when the start button is clicked  
-  - Makes jerry cans pop up randomly
+## How to Play
 
-## What You Need to Add
+- Click **Start Game** to begin.
+- Hit as many clean water cans as possible in 30 seconds.
+- Avoid dirty water (germ) targets—they cost you points and lives.
+- The closer to the center you hit, the more points you earn.
+- Lose all lives or run out of time to end the game.
+- Use the **Pause** button to pause/resume. **How to Play** shows instructions.
+- Spend points for new water facts using the button below the game.
 
-Here’s what you're required to implement to bring the game to life:
+## Assets
 
-### Game Functionality
+- **img/**: Contains all game images (logo, targets, cursor, feedback rings, etc.)
+- **wav/**: Contains all sound effects (correct, incorrect, water gun, etc.)
 
-- **Update the score**
-  - +1 point for each can clicked  
+## Technical Details
 
-- **Add a 30-second timer**
-  - When the timer reaches 0, the game ends  
+- Built with HTML, CSS (Bootstrap 5 + custom styles), and JavaScript.
+- Uses Bootstrap 5 modals for pause, game over, and instructions.
+- Fully responsive and accessible.
 
-- **Display a message when the game ends**
-  - If the player scores **20 or more points**, show a **winning** message  
-  - If the player scores **less than 20 points**, show a **"try again"** message  
-  - Create one array of possible winning messages and one array of losing messages  
-  - Depending on whether the user wins or loses, randomly pick and display a message from the appropriate array  
+---
 
-### Visual Styling
+All sound effects are copyright free and sourced from the YouTube Audio Library.
 
-- **Add charity: water branding**
-  
-  - Use the provided logo  
-  - Use the [charity: water brand guidelines](https://drive.google.com/file/d/1ct4zYRIwHAtxoNQoeaVwWYPdnruSC6sr/view) to stay on-brand with colors and styling
-  - Add styling rules to ensure your game layout adjusts well across different screen sizes
-
-These are the minimum requirements, but if you'd like an additional challenge go ahead and give the LevelUps a shot! For example, you could add logic to decrease the user's score if they miss a jerry can. Have fun and make the game your own!
-
-If you have any questions or need any assistance with your code, reach out to the HelpHub or attend a Drop-In Hour. You got this!!
-
+Game and art by Jacob Martinez and KZ.
