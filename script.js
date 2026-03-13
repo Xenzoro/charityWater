@@ -4,6 +4,14 @@ function playSound(src){
   audio.play();
 }
 
+function showGameModal (title, message){
+  document.getElementById('gameModalLabel').innerHTML = title;
+  document.getElementById('gameModalBody').innerHTML = message;
+
+  const modal = new bootstrap.Modal(document.getElementById('gameModal'));
+  modal.show();
+}
+
 // Custom cursor logic for gameBox
 const gameBox = document.getElementById('gameBox');
 const customCursor = document.querySelector('.custom-cursor');
@@ -67,6 +75,22 @@ function createGrid() {
 // Ensure the grid is created when the page loads
 createGrid();
 
+//program How to Play button;
+document.getElementById('how-to-play').addEventListener('click', () => {
+  showGameModal('Game Rules', `
+    <ul style="text-align:left; font-size:1.1em; line-height:1.7; margin-left:1em;">
+      <li><strong>Hit as many Jerry-Can targets as possible in 30 seconds!</strong></li>
+      <li>The closer to the center you hit, the more points you get.</li>
+      <li><span style="color:#F5402C;">Avoid hitting <strong>Dirty Water</strong> targets</span> – they cost you 15 points and a life!</li>
+      <li>You start with <strong>3 lives</strong>. Lose them all and the game ends.</li>
+      <li>The game also ends when the timer runs out.</li>
+      <li>Try to get the highest score you can. Good luck and have fun!</li>
+    </ul>
+  `);
+});
+
+
+
 
 
 //Going to recreate a spawning system that allows for dirty water spawns
@@ -78,6 +102,7 @@ let lives = STARTING_LIVES; // pass variable into dynamically changing var
 let timeLeft = GAME_TIME; // same concept here
 let gameActive = false;
 let isPaused = false;
+let cachePoints =0;
 
 let spawnInterval;
 let timerInterval;
@@ -131,10 +156,12 @@ function handleTargetClick(e) {
 
   const target = e.currentTarget;
   const isDirty = target.classList.contains('dirty');
+  const dirtyHit = 15;// instead of just putting 15 as a magic number, this allows for easier adjustments later if needed
 
   // Handle dirty water
   if (isDirty) {
     lives--;
+    score -= dirtyHit;
     updateHUD();
 
     playSound('./wav/incorrect.mp3');
@@ -147,7 +174,7 @@ function handleTargetClick(e) {
     }, 300);
 
     if (lives <= 0) {
-      endGame();
+      endGame(score);
     }
     return;
   }
@@ -220,10 +247,12 @@ function startTimer() {
     updateHUD();
 
     if (timeLeft <= 0) {
-      endGame();
+      endGame(score);
     }
   }, 1000);
 }
+
+// ...existing code...
 
 function pauseGame() {
   if (!gameActive) return;
@@ -236,21 +265,24 @@ function pauseGame() {
     clearInterval(spawnInterval);
     clearInterval(timerInterval);
     pauseButton.textContent = 'Resume Game';
-  } else {
-    // Resume the game
-    pauseButton.textContent = 'Pause Game';
-    spawnInterval = setInterval(spawnTarget, 1000);
-    startTimer();
+    // display modal message
+    showGameModal('Game Paused', 'You paused the game. Click Resume Game to continue.');
+
+    //grab if modal was closed
+    const modalElement = document.getElementById('gameModal');
+
+    function modalClosed(){
+      pauseButton.textContent = 'Pause Game';
+      isPaused = false;
+      spawnInterval = setInterval(spawnTarget, 1000);
+      startTimer();
+      modalElement.removeEventListener('hidden.bs.modal', modalClosed);
+    }
+    modalElement.addEventListener('hidden.bs.modal', modalClosed);
+
   }
+
 }
-
-
-
-
-
-
-
-
 
 function startGame() {
   if (gameActive) return;
@@ -269,18 +301,38 @@ function startGame() {
   startTimer();
 }
 
-function endGame() {
+function endGame(points) {
   gameActive = false;
   isPaused = false;
 
   clearInterval(spawnInterval);
   clearInterval(timerInterval);
   clearGrid();
+  //cache points for the fact system
+  if(points > 0){
+    cachePoints += points;
+    document.getElementById('cache-points').textContent = `${cachePoints}`;
+  }
 
   // Reset pause button text
   document.getElementById('pause-game').textContent = 'Pause Game';
 
-  alert(`Game Over! Final Score: ${score}`);
+  // alert(`Game Over! Final Score: ${score}`); replace with modal call
+  if(lives <= 0) {
+    showGameModal('Game Over!', `You lost all your lives! Final Score: ${score} try better next time!`);
+  }else if(lives > 0){
+    confetti({
+      particleCount:100,
+      spread: 100
+    });
+    playSound('./wav/tada.mp3');
+    if(points > 0){
+      cachePoints += points;
+    }
+    showGameModal('Game Over!', `Time's up! Final Score: ${score} Great job!`);
+  }
+
+
 }
 
 // Set up click handler for the start button
@@ -289,3 +341,39 @@ document.getElementById('start-game').addEventListener('click', startGame);
 // Set up click handler for the pause button
 document.getElementById('pause-game').addEventListener('click', pauseGame);
 
+
+//this function will take a users cahcePoints and return a Fact
+document.getElementById('new-fact').addEventListener('click', () => {
+  const facts = [
+    "Over 2 billion people worldwide lack access to safe drinking water.",
+    "Nearly 771 million people still live without basic access to clean water.",
+    "Access to clean water can reduce waterborne diseases by up to 50 percent.",
+    "Women and girls spend about 200 million hours every day collecting water.",
+    "Clean water can improve school attendance, especially for young girls.",
+    "Unsafe water and poor sanitation cause hundreds of thousands of deaths each year.",
+    "Access to clean water helps communities grow food, earn income, and stay healthy.",
+    "Many families must walk miles every day just to collect water for drinking and cooking.",
+    "Clean water projects can transform entire communities and improve quality of life.",
+    "Just $40 can help bring clean water to one person in need.",
+    "Access to safe water helps reduce childhood illness and improves overall health.",
+    "Reliable water sources allow children to spend more time in school instead of collecting water.",
+    "Clean water supports better hygiene, which helps prevent the spread of disease.",
+    "Water scarcity affects communities across Africa, Asia, and parts of Latin America.",
+    "With access to clean water, families can focus on education, work, and building stronger communities.",
+  ];
+  if(cachePoints < 50) {
+    showGameModal('Not Enough Points', `You need at least 50 points to unlock a new fact! Keep playing to earn more points. Current Points: ${cachePoints}`);
+  } else {
+    const factOutput = facts[Math.floor(Math.random() * facts.length)];
+    document.getElementById('fact').textContent = factOutput;
+    cachePoints -= 50;
+    document.getElementById('cache-points').textContent = `${cachePoints}`;
+
+  }
+
+
+
+
+
+
+});

@@ -248,6 +248,10 @@ button:active {
   box-shadow: 0 2px 10px rgba(255, 201, 7, 0.3);
 }
 
+.h5Points{
+  color: #FFC907;
+}
+
 #gameBox {
   position: relative;
   /* Ensures absolutely positioned children (like .custom-cursor) are relative to this box */
@@ -255,4 +259,43 @@ button:active {
 }
 #gameBox * {
   cursor: none !important;
+}
+
+.water-facts{
+  color: #FFF6EE;
+}
+
+.custom-modal .modal-content {
+  background: linear-gradient(135deg, #0a2463 0%, #247ba0 100%);
+  border: none;
+  box-shadow: 0 4px 20px rgba(10,36,99,0.3);
+
+}
+
+.modal-title {
+  color: #FFC907;
+}
+
+.custom-modal .modal-header, .custom-modal .modal-footer {
+  border: none;
+  background: transparent;
+}
+.custom-modal .btn-close {
+  filter: invert(1);
+}
+
+/* Custom modal background and text color for gameModal */
+#gameModal .modal-content {
+  background: linear-gradient(135deg, #0a2463 0%, #247ba0 100%) !important;
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 4px 20px rgba(10,36,99,0.3);
+}
+#gameModal .modal-header,
+#gameModal .modal-footer {
+  border: none;
+  background: transparent;
+}
+#gameModal .btn-close {
+  filter: invert(1);
 }
