@@ -307,7 +307,7 @@ a{
   font-style: inherit;
 }
 a:visited, a:focus, a:hover {
-  color: inherit;
+  color: #FFC907;
 
 }
 #footerTxt{
