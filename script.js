@@ -85,6 +85,7 @@ document.getElementById('how-to-play').addEventListener('click', () => {
       <li>You start with <strong>3 lives</strong>. Lose them all and the game ends.</li>
       <li>The game also ends when the timer runs out.</li>
       <li>Try to get the highest score you can. Good luck and have fun!</li>
+      <li>One last thing, if your having trouble hitting the targets, make sure your <strong> clicking, not holding</strong>  left mouse click</li>
     </ul>
   `);
 });

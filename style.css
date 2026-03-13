@@ -314,3 +314,13 @@ a:visited, a:focus, a:hover {
   color: #FFC907;
   text-shadow: 2px 2px 4px rgba(14, 14, 14, 0.3);
 }
+
+@media only screen and (max-width: 1000px) {
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
