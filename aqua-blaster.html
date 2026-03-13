@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aqua Blaster - charity: water</title>
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #003F5C 0%, #004E7A 100%);
+      font-family: 'Nunito', sans-serif;
+      color: white;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    /* Header & Navbar */
+    .navbar-custom {
+      background-color: transparent;
+      border-bottom: 3px solid #00B4D8;
+      padding: 20px 0;
+      margin-bottom: 30px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+    }
+
+    .game-title {
+      font-family: 'Bangers', cursive;
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #00B4D8;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin: 0;
+      text-align: center;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #F4A261;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* HUD Bar */
+    .hud-bar {
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 2px solid #00B4D8;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .hud-item {
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .hud-label {
+      font-size: 0.9rem;
+      color: #F4A261;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hud-value {
+      font-size: 1.8rem;
+      color: #00B4D8;
+      margin-top: 5px;
+    }
+
+    /* Main Game Card */
+    .game-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 3px solid #00B4D8;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .grid-label {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #F4A261;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Game Grid Layout */
+    .game-grid-container {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+
+    .water-gun-placeholder {
+      width: 100px;
+      height: 150px;
+      background: linear-gradient(135deg, #F4A261 0%, #E8963A 100%);
+      border: 3px solid #C4813A;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+
+    /* Game Grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      min-width: 400px;
+    }
+
+    .water-drop-target {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5C3A1E 0%, #3D2314 100%);
+      border: 3px solid #2A1810;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 5px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .water-drop-target:hover {
+      background: linear-gradient(135deg, #6d4427 0%, #4d331f 100%);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 8px 20px rgba(0, 180, 216, 0.4);
+      transform: scale(1.05);
+    }
+
+    .water-drop-target:active {
+      transform: scale(0.95);
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9), 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Buttons */
+    .btn-start-game {
+      background: linear-gradient(135deg, #00B4D8 0%, #0099CC 100%);
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 800;
+      padding: 18px 40px;
+      border-radius: 15px;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 180, 216, 0.3);
+      margin-bottom: 25px;
+    }
+
+    .btn-start-game:hover {
+      background: linear-gradient(135deg, #00D4F8 0%, #00AADD 100%);
+      box-shadow: 0 12px 30px rgba(0, 180, 216, 0.5);
+      transform: translateY(-2px);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-start-game:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 180, 216, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn-secondary-custom {
+      background: rgba(244, 162, 97, 0.2);
+      border: 2px solid #F4A261;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .btn-secondary-custom:hover {
+      background: rgba(244, 162, 97, 0.4);
+      box-shadow: 0 5px 15px rgba(244, 162, 97, 0.3);
+      color: white;
+      text-decoration: none;
+      border-color: #F4A261;
+    }
+
+    .btn-secondary-custom:active {
+      transform: scale(0.98);
+    }
+
+    /* Footer */
+    .water-fact {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .game-title {
+        font-size: 2.5rem;
+      }
+
+      .game-grid-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .water-gun-placeholder {
+        width: 80px;
+        height: 120px;
+      }
+
+      .game-grid {
+        min-width: 100%;
+      }
+
+      .water-drop-target {
+        width: 70px;
+        height: 70px;
+      }
+
+      .hud-bar {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn-secondary-custom {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="navbar-custom">
+    <div class="container">
+      <div class="logo-container">
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="50" height="50" rx="8" fill="#00B4D8" opacity="0.2"/>
+          <path d="M25 10C25 10 20 15 20 22C20 27.5228 22.2386 30 25 30C27.7614 30 30 27.5228 30 22C30 15 25 10 25 10Z" fill="#00B4D8"/>
+          <circle cx="25" cy="38" r="3" fill="#F4A261"/>
+        </svg>
+        <span style="font-size: 1.1rem; font-weight: 700; color: #F4A261;">charity: water</span>
+      </div>
+      <h1 class="game-title">Aqua Blaster</h1>
+      <p class="tagline">Defend communities from dirty water.</p>
+    </div>
+  </div>
+
+  <!-- HUD Bar -->
+  <div class="container">
+    <div class="hud-bar">
+      <div class="hud-item">
+        <div class="hud-label">Score</div>
+        <div class="hud-value">0</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Time</div>
+        <div class="hud-value">30s</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Lives</div>
+        <div class="hud-value">❤️❤️❤️</div>
+      </div>
+    </div>
+
+    <!-- Main Game Card -->
+    <div class="game-card">
+      <div class="grid-label">4×4 GAME GRID — Drops Pop Up Here</div>
+
+      <!-- Game Grid with Water Gun -->
+      <div class="game-grid-container">
+        <div class="water-gun-placeholder">🔫</div>
+        <div class="game-grid">
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+          <button class="water-drop-target">💧</button>
+        </div>
+      </div>
+
+      <!-- Start Game Button -->
+      <button class="btn-start-game">Start Game</button>
+
+      <!-- Secondary Buttons -->
+      <div class="button-group">
+        <button class="btn-secondary-custom">Pause</button>
+        <button class="btn-secondary-custom">How to Play</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="water-fact">
+      <strong>Water Fact:</strong> 783 million people lack access to clean water. Every drop counts — your game helps charity: water bring clean water to communities in need.
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (optional, for any future enhancements) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

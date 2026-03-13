@@ -1,0 +1,145 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);
+  margin: 0;
+  min-height: 100vh;
+  padding: 20px;
+  color: #5F5F5F;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 42px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #D95F2A;
+  margin: 10px 0;
+}
+
+h1 i {
+  margin-right: 5px;
+  font-size: 38px;
+}
+
+h2 {
+  font-weight: 600;
+  margin-top: 0;
+  color: #8D6E63;
+  font-size: 18px;
+}
+
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.container {
+  background-color: #FFFFFF;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(255, 167, 38, 0.1);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 0 15px;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}
+
+form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  background-color: #FFFFFF;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.form-group:hover {
+  transform: translateY(-2px);
+}
+
+
+label {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 8px;
+  color: #6D4C41;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #D8BFAA;
+  border-radius: 8px;
+  color: #5E4636;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.submit-button {
+  background-color: #D95F2A;
+  color: #FFFFFF;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.2);
+  margin-top: 8px;
+}
+
+.submit-button:hover {
+  background-color: #E88E5A;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 108, 0, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(239, 108, 0, 0.2);
+}
+
+#suggestion {
+  background-color: #FFF6EE;
+  border: 1px solid #E0C8B0;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+#suggestion p {
+  color: #7A4E36;
+  font-weight: 600;
+}
