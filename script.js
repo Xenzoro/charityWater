@@ -99,12 +99,15 @@ const GAME_TIME = 30;
 const STARTING_LIVES = 3;
 
 let score = 0;
-let lives = STARTING_LIVES; // pass variable into dynamically changing var
-let timeLeft = GAME_TIME; // same concept here
+let level = 0;
+let lives = STARTING_LIVES;
+let timeLeft = GAME_TIME;
 let gameActive = false;
 let isPaused = false;
-let cachePoints =0;
-
+let cachePoints = 0;
+let playerScore = 0;
+let playerLevel = 0;
+let player = [playerScore, playerLevel];
 let spawnInterval;
 let timerInterval;
 
@@ -169,7 +172,7 @@ function handleTargetClick(e) {
 
     // Show germ hit image
     target.style.backgroundImage = "url('img/germhit.png')";
-    
+
     setTimeout(() => {
       target.parentElement.parentElement.innerHTML = '';
     }, 300);
@@ -200,7 +203,7 @@ function handleTargetClick(e) {
   let hitImage = '';
 
   if (distance <= maxRadius * 0.33) {
-    points = 10;
+    points = 100;
     hitImage = "url('img/bullseye.png')";
   } else if (distance <= maxRadius * 0.66) {
     points = 5;
@@ -213,6 +216,18 @@ function handleTargetClick(e) {
   }
 
   score += points;
+  player[0] += points; // add points to player score
+
+  const newLevel = Math.floor(player[0] / 100);
+    if (newLevel> player[1]){
+        // const levelsGained = newLevel - player[1];
+    player[1] = newLevel;
+
+        rewardMessage();
+
+    }
+
+
   updateHUD();
 
   playSound('./wav/correct.mp3');
@@ -240,6 +255,18 @@ function showPoints(points, x, y) {
   setTimeout(() => {
     popup.remove();
   }, 600);
+}
+
+function rewardMessage(levelsGained) {
+  const winContainer = document.getElementById('win-container');
+  const winHeader = document.getElementById('win-header');
+  const winText = document.getElementById('win-text');
+
+  winHeader.textContent = `🎉 Level Up! +${player[1]}`;
+  winText.textContent = `You're currently at Level ${player[1]}!`;
+
+
+  winContainer.style.display = 'block';
 }
 
 function startTimer() {
@@ -298,6 +325,7 @@ function startGame(difficulty) {
   gameActive = true;
   isPaused = false;
   score = 0;
+  level = 0;
   lives = STARTING_LIVES;
   timeLeft = GAME_TIME;
 
@@ -455,3 +483,4 @@ document.getElementById('new-fact').addEventListener('click', () => {
 
 
 });
+
