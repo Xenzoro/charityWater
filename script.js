@@ -99,20 +99,23 @@ const GAME_TIME = 30;
 const STARTING_LIVES = 3;
 
 let score = 0;
-let lives = STARTING_LIVES; // pass variable into dynamically changing var
-let timeLeft = GAME_TIME; // same concept here
+let level = 0;
+let lives = STARTING_LIVES;
+let timeLeft = GAME_TIME;
 let gameActive = false;
 let isPaused = false;
-let cachePoints =0;
-
+let cachePoints = 0;
+let playerScore = 0;
+let playerLevel = 0;
+let player = [playerScore, playerLevel];
 let spawnInterval;
 let timerInterval;
 
 //update HUD
 function updateHUD() {
-  document.getElementById('score').textContent = `Score: ${score}`;
-  document.getElementById('time').textContent = `Time: ${timeLeft}s`;
-  document.getElementById('lives').textContent = `Lives: ${'💧'.repeat(lives)}`;
+  document.getElementById('score').textContent = ` ${score}`;
+  document.getElementById('time').textContent = ` ${timeLeft}s`;
+  document.getElementById('lives').textContent = ` ${'💧'.repeat(lives)}`;
 }
 
 //clear GRID
@@ -169,7 +172,7 @@ function handleTargetClick(e) {
 
     // Show germ hit image
     target.style.backgroundImage = "url('img/germhit.png')";
-    
+
     setTimeout(() => {
       target.parentElement.parentElement.innerHTML = '';
     }, 300);
@@ -200,7 +203,7 @@ function handleTargetClick(e) {
   let hitImage = '';
 
   if (distance <= maxRadius * 0.33) {
-    points = 10;
+    points = 100;
     hitImage = "url('img/bullseye.png')";
   } else if (distance <= maxRadius * 0.66) {
     points = 5;
@@ -213,6 +216,18 @@ function handleTargetClick(e) {
   }
 
   score += points;
+  player[0] += points; // add points to player score
+
+  const newLevel = Math.floor(player[0] / 100);
+    if (newLevel> player[1]){
+        // const levelsGained = newLevel - player[1];
+    player[1] = newLevel;
+
+        rewardMessage();
+
+    }
+
+
   updateHUD();
 
   playSound('./wav/correct.mp3');
@@ -242,6 +257,18 @@ function showPoints(points, x, y) {
   }, 600);
 }
 
+function rewardMessage(levelsGained) {
+  const winContainer = document.getElementById('win-container');
+  const winHeader = document.getElementById('win-header');
+  const winText = document.getElementById('win-text');
+
+  winHeader.textContent = `🎉 Level Up! +${player[1]}`;
+  winText.textContent = `You're currently at Level ${player[1]}!`;
+
+
+  winContainer.style.display = 'block';
+}
+
 function startTimer() {
   timerInterval = setInterval(() => {
     timeLeft--;
@@ -253,7 +280,18 @@ function startTimer() {
   }, 1000);
 }
 
-// ...existing code...
+
+function modalClosed(options) {
+  if(options.resumeGame){
+    document.getElementById('pause-game').textContent = 'Pause Game';
+    isPaused = true;
+    spawnInterval = setInterval(spawnTarget, 1000);
+    startTimer()
+  }
+
+}
+
+
 
 function pauseGame() {
   if (!gameActive) return;
@@ -268,39 +306,89 @@ function pauseGame() {
     pauseButton.textContent = 'Resume Game';
     // display modal message
     showGameModal('Game Paused', 'You paused the game. Click Resume Game to continue.');
-
-    //grab if modal was closed
-    const modalElement = document.getElementById('gameModal');
-
-    function modalClosed(){
+    // Handler for closing pause modal
+    function pauseModalClosed() {
       pauseButton.textContent = 'Pause Game';
       isPaused = false;
       spawnInterval = setInterval(spawnTarget, 1000);
       startTimer();
-      modalElement.removeEventListener('hidden.bs.modal', modalClosed);
+      modalElement.removeEventListener('hidden.bs.modal', pauseModalClosed);
     }
-    modalElement.addEventListener('hidden.bs.modal', modalClosed);
-
+    const modalElement = document.getElementById('gameModal');
+    modalElement.addEventListener('hidden.bs.modal', pauseModalClosed);
   }
-
 }
 
-function startGame() {
+function startGame(difficulty) {
   if (gameActive) return;
 
   gameActive = true;
   isPaused = false;
   score = 0;
+  level = 0;
   lives = STARTING_LIVES;
   timeLeft = GAME_TIME;
+
+  // Set difficulty parameters
+  let spawnRate = 1000; // default medium
+  let gameTime = 30;
+  let startingLives = 3;
+  if (difficulty === 'easy') {
+    spawnRate = 1300;
+    gameTime = 40;
+    startingLives = 5;
+  } else if (difficulty === 'hard') {
+    spawnRate = 700;
+    gameTime = 20;
+    startingLives = 2;
+  }
+  // Apply difficulty
+  lives = startingLives;
+  timeLeft = gameTime;
 
   createGrid();
   updateHUD();
 
   spawnTarget();
-  spawnInterval = setInterval(spawnTarget, 1000);
+  clearInterval(spawnInterval);
+  spawnInterval = setInterval(spawnTarget, spawnRate);
+  clearInterval(timerInterval);
   startTimer();
 }
+
+let isResetMode = false;
+const closeModalBtn = document.getElementById('close-modal');
+const modalElement = document.getElementById('gameModal');
+
+function resetGame() {
+  showGameModal('Reset Game', 'Are you sure you want to reset? Your current progress will be lost.');
+  closeModalBtn.textContent = 'Reset Game';
+  isResetMode = true;
+}
+
+closeModalBtn.addEventListener('click', function() {
+  if (isResetMode) {
+    clearInterval(spawnInterval);
+    clearInterval(timerInterval);
+    gameActive = false;
+    isPaused = false;
+    score = 0;
+    lives = STARTING_LIVES;
+    timeLeft = GAME_TIME;
+    clearGrid();
+    updateHUD();
+    isResetMode = false;
+    closeModalBtn.textContent = 'Close';
+  }
+});
+
+modalElement.addEventListener('hidden.bs.modal', function() {
+  // If modal closed by X or outside, cancel reset mode and restore button text
+  if (isResetMode) {
+    isResetMode = false;
+    closeModalBtn.textContent = 'Close';
+  }
+});
 
 function endGame(points) {
   gameActive = false;
@@ -337,10 +425,27 @@ function endGame(points) {
 }
 
 // Set up click handler for the start button
-document.getElementById('start-game').addEventListener('click', startGame);
+// Remove old start-game button event listener (button removed from HTML)
+
+// Add event listeners for difficulty dropdown
+document.getElementById('easy-mode').addEventListener('click', function(e) {
+  e.preventDefault();
+  startGame('easy');
+});
+document.getElementById('medium-mode').addEventListener('click', function(e) {
+  e.preventDefault();
+  startGame('medium');
+});
+document.getElementById('hard-mode').addEventListener('click', function(e) {
+  e.preventDefault();
+  startGame('hard');
+});
 
 // Set up click handler for the pause button
 document.getElementById('pause-game').addEventListener('click', pauseGame);
+
+//set up click handler for reset button
+document.getElementById('reset-game').addEventListener('click', resetGame);
 
 
 //this function will take a users cahcePoints and return a Fact
@@ -378,3 +483,4 @@ document.getElementById('new-fact').addEventListener('click', () => {
 
 
 });
+
