@@ -504,9 +504,7 @@ footer {
   /*flex-shrink: 0;*/
 }
 .footer-logo-row{
-    align-items: center;
-    justify-content: center;
-    display: flex;
+    gap: 0.5rem;
 }
 
 
