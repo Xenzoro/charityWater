@@ -36,6 +36,7 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 - Bootstrap 5 CSS for layout; the modals and the difficulty menu are small React components using Bootstrap's classes, so Bootstrap's JavaScript isn't needed.
 - Static parts (navbar, footer, intro text) are server components and ship no JavaScript. The game is a client component.
 - Montserrat is self hosted with `next/font`; logos use `next/image`.
+- At build time, PurgeCSS (`postcss.config.mjs`) strips CSS the site never uses, and the remaining CSS (about 7 KB gzipped) is inlined into the HTML. If you add a class only at runtime (built from a string), add it to the safelist in `postcss.config.mjs`.
 
 ## Project Structure
 
