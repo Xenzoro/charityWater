@@ -17,6 +17,8 @@ const purgecss = {
   },
 };
 
-export default {
+const config = {
   plugins: process.env.NODE_ENV === "production" ? purgecss : {},
 };
+
+export default config;
