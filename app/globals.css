@@ -292,7 +292,9 @@ button.dropdown-item:active {
   transition: none;
 }
 
-.h5Points {
+/* .h5.h5Points: the points line is now <p class="h5"> (it was an <h5>),
+   so this needs to beat Bootstrap's .h5 color to stay yellow. */
+.h5.h5Points {
   color: #FFC907;
 }
 
