@@ -27,12 +27,12 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 
 ## Assets
 
-- **public/img/**: All game images (logo, targets, cursor, feedback rings), served as WebP at their displayed size
+- **assets/img/**: All game images (logos, targets, cursor, feedback rings) as WebP at their displayed size, with 2x versions for high density screens
 - **public/wav/**: All sound effects (correct, incorrect, water gun, tada)
 
 ## Technical Details
 
-- Built with Next.js (App Router), React, and JavaScript. The whole site is statically generated.
+- Built with Next.js (App Router), React, and JavaScript, as a static export (plain HTML, CSS and JS) hosted on GitHub Pages.
 - Bootstrap 5 CSS for layout; the modals and the difficulty menu are small React components using Bootstrap's classes, so Bootstrap's JavaScript isn't needed.
 - Static parts (navbar, footer, intro text) are server components and ship no JavaScript. The game is a client component.
 - Montserrat is self hosted with `next/font`; logos use `next/image`.
@@ -44,18 +44,24 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 app/            layout (navbar + footer), page, global CSS, fonts, favicon
 components/     Navbar, Footer, GameArea, GameModal, DifficultyMenu, CustomCursor, WaterFacts
 lib/            gameConfig.js (all game numbers), facts.js, sounds.js
-public/         images and sounds
+assets/img/     images (bundled, so their URLs get the Pages prefix automatically)
+public/wav/     sounds
 ```
 
 ## Running Locally
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
+npm run dev       # live dev server at http://localhost:3000
+npm run build     # static export to out/
+npm run preview   # serve out/ at http://localhost:3000 to test the real build
 ```
 
-Deploys to Vercel with no extra settings.
+## Deploying (GitHub Pages)
+
+`.github/workflows/deploy.yml` builds the static export and publishes it to GitHub Pages on every push to `main`.
+One time setup: repo **Settings > Pages > Build and deployment > Source** must be **GitHub Actions**.
+The workflow builds with the `/charityWater` base path so all links work at https://xenzoro.github.io/charityWater/.
 
 ---
 

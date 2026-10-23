@@ -20,9 +20,6 @@ const montserrat = localFont({
   variable: "--font-montserrat",
 });
 
-// Fail the build if anything ever makes this site render per request.
-export const ensureStatic = "navigation";
-
 export const metadata = {
   title: "Charity: Water Aqua Blaster",
   description:

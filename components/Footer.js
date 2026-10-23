@@ -12,7 +12,7 @@ import {
   FaClock,
   FaPhone,
 } from "react-icons/fa";
-import footerLogo from "@/public/img/water-can-transparent.png";
+import footerLogo from "@/assets/img/water-can.webp";
 
 const SOCIAL_LINKS = [
   { href: "https://www.facebook.com/charitywater", label: "Facebook", Icon: FaFacebookF },

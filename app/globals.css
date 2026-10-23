@@ -39,7 +39,7 @@ body {
 }
 
 /* Custom water gun cursor.
-   Rendered at the end of <body> with position: fixed and moved with
+   Rendered just outside the game box with position: fixed and moved with
    transform, so moving it never triggers layout. The image is cropped to
    the visible gun (279x285) instead of a 400x400 box that was mostly
    transparent, so there is less to repaint without hardware acceleration. */
@@ -49,8 +49,7 @@ body {
   left: 0;
   width: 279px;
   height: 285px;
-  background-image: url('/img/cursorwgun-1x.webp');
-  background-image: image-set(url('/img/cursorwgun-1x.webp') 1x, url('/img/cursorwgun-2x.webp') 2x);
+  background-image: url('../assets/img/cursorwgun-1x.webp');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   pointer-events: none;
@@ -64,8 +63,7 @@ body {
 }
 
 .custom-cursor.is-shooting {
-  background-image: url('/img/cursorwgunshoot-1x.webp');
-  background-image: image-set(url('/img/cursorwgunshoot-1x.webp') 1x, url('/img/cursorwgunshoot-2x.webp') 2x);
+  background-image: url('../assets/img/cursorwgunshoot-1x.webp');
 }
 
 .container {
@@ -186,34 +184,64 @@ h2, h3 {
 }
 
 .water-can.clean {
-  background-image: url('/img/cantarget-1x.webp');
-  background-image: image-set(url('/img/cantarget-1x.webp') 1x, url('/img/cantarget-2x.webp') 2x);
+  background-image: url('../assets/img/cantarget-1x.webp');
 }
 
 .water-can.dirty {
-  background-image: url('/img/germ-1x.webp');
-  background-image: image-set(url('/img/germ-1x.webp') 1x, url('/img/germ-2x.webp') 2x);
+  background-image: url('../assets/img/germ-1x.webp');
 }
 
 /* Hit feedback (was set with inline styles in script.js) */
 .water-can.hit-bullseye {
-  background-image: url('/img/bullseye-1x.webp');
-  background-image: image-set(url('/img/bullseye-1x.webp') 1x, url('/img/bullseye-2x.webp') 2x);
+  background-image: url('../assets/img/bullseye-1x.webp');
 }
 
 .water-can.hit-middlering {
-  background-image: url('/img/middlering-1x.webp');
-  background-image: image-set(url('/img/middlering-1x.webp') 1x, url('/img/middlering-2x.webp') 2x);
+  background-image: url('../assets/img/middlering-1x.webp');
 }
 
 .water-can.hit-outerring {
-  background-image: url('/img/outerring-1x.webp');
-  background-image: image-set(url('/img/outerring-1x.webp') 1x, url('/img/outerring-2x.webp') 2x);
+  background-image: url('../assets/img/outerring-1x.webp');
 }
 
 .water-can.hit-germ {
-  background-image: url('/img/germhit-1x.webp');
-  background-image: image-set(url('/img/germhit-1x.webp') 1x, url('/img/germhit-2x.webp') 2x);
+  background-image: url('../assets/img/germhit-1x.webp');
+}
+
+/* Sharper 2x images on high density screens. (A media query instead of
+   image-set() because the bundler only rewrites plain url()s.) */
+@media (min-resolution: 2dppx) {
+  .custom-cursor {
+    background-image: url('../assets/img/cursorwgun-2x.webp');
+  }
+
+  .custom-cursor.is-shooting {
+    background-image: url('../assets/img/cursorwgunshoot-2x.webp');
+  }
+
+  .water-can.clean {
+    background-image: url('../assets/img/cantarget-2x.webp');
+  }
+
+  .water-can.dirty {
+    background-image: url('../assets/img/germ-2x.webp');
+  }
+
+  .water-can.hit-bullseye {
+    background-image: url('../assets/img/bullseye-2x.webp');
+  }
+
+  .water-can.hit-middlering {
+    background-image: url('../assets/img/middlering-2x.webp');
+  }
+
+  .water-can.hit-outerring {
+    background-image: url('../assets/img/outerring-2x.webp');
+  }
+
+  .water-can.hit-germ {
+    background-image: url('../assets/img/germhit-2x.webp');
+  }
 }
 
 @keyframes popUp {

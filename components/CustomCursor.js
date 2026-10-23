@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { CURSOR_OFFSET_X, CURSOR_OFFSET_Y } from "@/lib/gameConfig";
 import { playSound, preloadSounds } from "@/lib/sounds";
+import shoot1x from "@/assets/img/cursorwgunshoot-1x.webp";
+import shoot2x from "@/assets/img/cursorwgunshoot-2x.webp";
 
 // The water gun that follows the mouse inside the game box.
 //
@@ -45,7 +47,7 @@ export default function CustomCursor({ areaRef }) {
         // so the first shot does not stall.
         warmedUp = true;
         const shoot = new Image();
-        shoot.src = window.devicePixelRatio > 1 ? "/img/cursorwgunshoot-2x.webp" : "/img/cursorwgunshoot-1x.webp";
+        shoot.src = window.devicePixelRatio > 1 ? shoot2x.src : shoot1x.src;
         preloadSounds();
       }
       onMove(e);
