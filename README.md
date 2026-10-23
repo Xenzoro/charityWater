@@ -27,14 +27,34 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 
 ## Assets
 
-- **img/**: Contains all game images (logo, targets, cursor, feedback rings, etc.)
-- **wav/**: Contains all sound effects (correct, incorrect, water gun, etc.)
+- **public/img/**: All game images (logo, targets, cursor, feedback rings), served as WebP at their displayed size
+- **public/wav/**: All sound effects (correct, incorrect, water gun, tada)
 
 ## Technical Details
 
-- Built with HTML, CSS (Bootstrap 5 + custom styles), and JavaScript.
-- Uses Bootstrap 5 modals for pause, game over, and instructions.
-- Fully responsive and accessible.
+- Built with Next.js (App Router), React, and JavaScript. The whole site is statically generated.
+- Bootstrap 5 CSS for layout; the modals and the difficulty menu are small React components using Bootstrap's classes, so Bootstrap's JavaScript isn't needed.
+- Static parts (navbar, footer, intro text) are server components and ship no JavaScript. The game is a client component.
+- Montserrat is self hosted with `next/font`; logos use `next/image`.
+
+## Project Structure
+
+```
+app/            layout (navbar + footer), page, global CSS, fonts, favicon
+components/     Navbar, Footer, GameArea, GameModal, DifficultyMenu, CustomCursor, WaterFacts
+lib/            gameConfig.js (all game numbers), facts.js, sounds.js
+public/         images and sounds
+```
+
+## Running Locally
+
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+```
+
+Deploys to Vercel with no extra settings.
 
 ---
 
