@@ -32,7 +32,7 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 
 ## Technical Details
 
-- Built with Next.js (App Router), React, and JavaScript, as a static export (plain HTML, CSS and JS) hosted on GitHub Pages.
+- Built with Next.js (App Router), React, and JavaScript, as a static export (plain HTML, CSS and JS) hosted on Vercel.
 - Bootstrap 5 CSS for layout; the modals and the difficulty menu are small React components using Bootstrap's classes, so Bootstrap's JavaScript isn't needed.
 - Static parts (navbar, footer, intro text) are server components and ship no JavaScript. The game is a client component.
 - Montserrat is self hosted with `next/font`; logos use `next/image`.
@@ -57,11 +57,13 @@ npm run build     # static export to out/
 npm run preview   # serve out/ at http://localhost:3000 to test the real build
 ```
 
-## Deploying (GitHub Pages)
+## Deploying
 
-`.github/workflows/deploy.yml` builds the static export and publishes it to GitHub Pages on every push to `main`.
-One time setup: repo **Settings > Pages > Build and deployment > Source** must be **GitHub Actions**.
-The workflow builds with the `/charityWater` base path so all links work at https://xenzoro.github.io/charityWater/.
+Live: https://charitywater-cyan.vercel.app/
+
+Vercel is connected to this repo: every push to `main` deploys to production, and every other branch gets a preview URL.
+
+The old GitHub Pages address (https://xenzoro.github.io/charityWater/) only redirects to Vercel, keeping the rest of the path. `.github/workflows/pages-redirect.yml` publishes that redirect page; it runs when the workflow file changes or by hand from the Actions tab. One time setup: repo **Settings > Pages > Build and deployment > Source** must be **GitHub Actions**.
 
 ---
 
