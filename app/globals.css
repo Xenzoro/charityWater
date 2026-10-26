@@ -66,18 +66,15 @@ a {
 
 /* ---------- Navbar ---------- */
 
-/* White bar, like charity: water's own site: the logo's dark wordmark
-   needs a light background to be readable. */
+/* Dark blue bar. The logo is a light text version of the charity: water
+   logo (assets/img/cw_logo_horizontal_light.webp), since the original's
+   near black wordmark disappears on dark blue. */
 .site-nav {
   display: flex;
   justify-content: center;
-  padding: 14px 16px;
-  background: #fff;
-  border-bottom: 6px solid var(--yellow);
-}
-
-.site-nav-brand:focus-visible {
-  outline-color: var(--ocean);
+  padding: 16px 16px 14px;
+  background: var(--deep);
+  border-bottom: 4px solid var(--yellow);
 }
 
 .site-nav-brand {

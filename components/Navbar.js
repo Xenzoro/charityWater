@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/assets/img/cw_logo_horizontal.webp";
+import logo from "@/assets/img/cw_logo_horizontal_light.webp";
 
 // Server component: plain HTML, no JavaScript sent to the browser.
 export default function Navbar() {
