@@ -6,7 +6,9 @@ import { playSound, preloadSounds } from "@/lib/sounds";
 import shoot1x from "@/assets/img/cursorwgunshoot-1x.webp";
 import shoot2x from "@/assets/img/cursorwgunshoot-2x.webp";
 
-// The water gun that follows the mouse inside the game box.
+// The water gun that follows the mouse over the target grid. It only
+// shows over the targets, so the Start Game menu and the buttons keep the
+// normal pointer, and it never appears on touch screens.
 //
 // Built to stay smooth without hardware acceleration:
 // * position: fixed + transform, so moving it never triggers layout
@@ -15,8 +17,8 @@ import shoot2x from "@/assets/img/cursorwgunshoot-2x.webp";
 //   the newest mouse position, so it never falls behind a queue of events
 // * small, cropped images, so each repaint is cheap
 //
-// It is rendered outside the game box on purpose: the game box uses
-// backdrop-filter, which would trap a position: fixed element inside it.
+// It is rendered outside the board so nothing on the board can clip or
+// trap the fixed position element.
 export default function CustomCursor({ areaRef }) {
   const cursorRef = useRef(null);
 
@@ -24,6 +26,10 @@ export default function CustomCursor({ areaRef }) {
     const area = areaRef.current;
     const cursor = cursorRef.current;
     if (!area || !cursor) return;
+    // Only for a real mouse or trackpad. On a phone, taps would leave the
+    // gun stuck wherever the last tap was.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    area.classList.add("has-gun");
 
     let x = 0;
     let y = 0;
@@ -75,6 +81,7 @@ export default function CustomCursor({ areaRef }) {
 
     return () => {
       cancelAnimationFrame(frame);
+      area.classList.remove("has-gun");
       area.removeEventListener("mouseenter", onEnter);
       area.removeEventListener("mouseleave", onLeave);
       area.removeEventListener("mousemove", onMove);

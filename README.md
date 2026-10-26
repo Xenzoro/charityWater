@@ -10,7 +10,7 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 - **Custom cursor**: Water gun PNG cursor appears only inside the game area for immersive play.
 - **Sound effects**: All sound effects are copyright free and sourced from the YouTube Audio Library (see `wav/`).
 - **Dynamic HUD**: Displays score, timer, and lives (💧 icons).
-- **Pause and How to Play**: Pause/resume the game and view instructions via Bootstrap modals.
+- **Pause and How to Play**: Pause/resume the game and view instructions in a dialog.
 - **Game Over modal**: Shows your final score and a themed message when the game ends.
 - **Animated feedback**: Hit targets show different images based on accuracy; confetti on high scores.
 - **Water facts**: Spend points to unlock real-world water facts.
@@ -33,9 +33,10 @@ Aqua Blaster is a fast-paced browser game inspired by charity: water’s mission
 ## Technical Details
 
 - Built with Next.js (App Router), React, and JavaScript, as a static export (plain HTML, CSS and JS) hosted on Vercel.
-- Bootstrap 5 CSS for layout; the modals and the difficulty menu are small React components using Bootstrap's classes, so Bootstrap's JavaScript isn't needed.
+- Custom CSS in `app/globals.css` (design rules at the top of the file) on top of Bootstrap 5's base styles. The dialog and the difficulty menu are small React components, so Bootstrap's JavaScript isn't needed.
+- The screen holds still during a round: the board is framed when you press a difficulty, page scrolling is frozen until the round ends or you pause (`lib/scrollLock.js`), and nothing is inserted above the board mid game.
 - Static parts (navbar, footer, intro text) are server components and ship no JavaScript. The game is a client component.
-- Montserrat is self hosted with `next/font`; logos use `next/image`.
+- Fonts are self hosted with `next/font`: Lilita One for the title, scoreboard and buttons, Montserrat for body text. Logos use `next/image`.
 - At build time, PurgeCSS (`postcss.config.mjs`) strips CSS the site never uses, and the remaining CSS (about 7 KB gzipped) is inlined into the HTML. If you add a class only at runtime (built from a string), add it to the safelist in `postcss.config.mjs`.
 
 ## Project Structure

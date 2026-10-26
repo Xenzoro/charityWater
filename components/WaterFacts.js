@@ -2,19 +2,21 @@
 // which is already a client component, so it runs in the browser too.
 export default function WaterFacts({ fact, points, onNewFact, cost }) {
   return (
-    <div className="container text-center">
-      <h2 className="water-facts-header mt-5 mb-3" style={{ color: "#FFC907" }}>
-        Did You Know?
+    <section className="panel facts" aria-labelledby="facts-heading">
+      <h2 id="facts-heading" className="facts-heading">
+        Did you know?
       </h2>
-      <p className="water-facts mb-5">
-        <span id="fact">{fact}</span>
-      </p>
-      <p className="h5 h5Points">
-        Your Points: <span id="cache-points">{points}</span>
-      </p>
-      <button className="button btn btn-primary col-5 mb-5" id="new-fact" type="button" onClick={onNewFact}>
-        New Fact ({cost} Points)
-      </button>
-    </div>
+      <blockquote className="facts-quote">
+        <p id="fact">{fact}</p>
+      </blockquote>
+      <div className="facts-actions">
+        <p className="points-pill">
+          Your points <span id="cache-points">{points}</span>
+        </p>
+        <button className="btn-arcade btn-arcade-small" id="new-fact" type="button" onClick={onNewFact}>
+          New fact ({cost} points)
+        </button>
+      </div>
+    </section>
   );
 }

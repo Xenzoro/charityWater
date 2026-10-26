@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 
 const FADE_MS = 300; // matches Bootstrap's modal transition
 
-// Bootstrap's modal markup and classes, driven by React state instead of
-// Bootstrap's JavaScript bundle. Looks identical, ships far less JS.
+// A dialog built on Bootstrap's modal markup and classes, driven by React
+// state instead of Bootstrap's JavaScript bundle.
 //
 // Props:
 //   modal:    null, or { title, body, confirmLabel }
@@ -30,7 +31,7 @@ export default function GameModal({ modal, onHidden }) {
     if (!modal || shown || closing) return;
     const frame = requestAnimationFrame(() => {
       setShown(true);
-      dialogRef.current?.focus();
+      dialogRef.current?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
   }, [modal, shown, closing]);
@@ -49,21 +50,16 @@ export default function GameModal({ modal, onHidden }) {
     [modal, closing],
   );
 
-  // While open: lock page scroll the way Bootstrap does, and give focus
-  // back to whatever had it when the modal closes.
+  // While open: freeze page scroll, and give focus back to whatever had it
+  // when the modal closes. preventScroll stops the browser from jumping to
+  // that button (a jump was one of the "screen moves" problems).
   useEffect(() => {
     if (!isOpen) return;
     const previousFocus = document.activeElement;
-    const body = document.body;
-    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
-    body.classList.add("modal-open");
-    body.style.overflow = "hidden";
-    if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`;
+    lockScroll("modal");
     return () => {
-      body.classList.remove("modal-open");
-      body.style.overflow = "";
-      body.style.paddingRight = "";
-      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+      unlockScroll("modal");
+      if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true });
     };
   }, [isOpen]);
 
@@ -82,10 +78,10 @@ export default function GameModal({ modal, onHidden }) {
       const last = focusable[focusable.length - 1];
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
-        last.focus();
+        last.focus({ preventScroll: true });
       } else if (!e.shiftKey && document.activeElement === last) {
         e.preventDefault();
-        first.focus();
+        first.focus({ preventScroll: true });
       }
     }
     document.addEventListener("keydown", onKeyDown);
@@ -122,7 +118,7 @@ export default function GameModal({ modal, onHidden }) {
               {modal.body}
             </div>
             <div className="modal-footer">
-              <button id="close-modal" type="button" className="button btn btn-secondary" onClick={() => close(true)}>
+              <button id="close-modal" type="button" className="btn-arcade btn-arcade-small" onClick={() => close(true)}>
                 {modal.confirmLabel ?? "Close"}
               </button>
             </div>

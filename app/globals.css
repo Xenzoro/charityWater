@@ -1,135 +1,210 @@
-/* Charity: water Brand Colors & Fonts
+/* Aqua Blaster: a fairground water gun booth in charity: water colors.
 
-Primary Colors:
-  Yellow:     #FFC907
-  Blue:       #2E9DF7
+   Design rules
+   * Yellow is for things you press or score. Blue is structure. Aqua labels.
+     Red only means danger (dirty water, losing lives, resetting).
+   * Depth comes from solid offset "sticker" shadows, never blurred ones.
+     Blurred shadows and backdrop blur are expensive to paint without
+     hardware acceleration, and the gun repaints the board on every move.
+   * The board (scoreboard + wells) is the one loud thing. Everything else
+     stays quiet.
 
-Secondary Colors:
-  Light Blue: #8BD1CB
-  Green:      #4FCB53
-  Orange:     #FF902A
-  Red:        #F5402C
-  Dark Green: #159A48
-  Pink:       #F16061
+   Loaded after Bootstrap (see app/layout.js), so these rules win ties. */
 
-Fonts: Proxima Nova and Avenir (Montserrat is the free stand in, loaded with next/font)
+:root {
+  --well: #061b3f; /* deepest navy, page background */
+  --deep: #0a2a5e; /* panels */
+  --ocean: #0e4c92; /* page background bottom, hovers */
+  --rim: #1f6fc4; /* panel and well borders */
+  --blue: #2e9df7; /* charity: water blue */
+  --yellow: #ffc907; /* charity: water yellow */
+  --yellow-hover: #ffd640;
+  --aqua: #8bd1cb; /* charity: water light blue */
+  --foam: #f2f8ff; /* text */
+  --red: #f5402c; /* charity: water red */
+  --green: #4fcb53; /* charity: water green */
+  --ink: #04122b; /* sticker shadows and outlines */
 
-This file is imported BEFORE Bootstrap in app/layout.js, same as the
-original index.html, so Bootstrap still wins ties exactly like before.
-*/
+  --font-ui: var(--font-body), "Avenir", system-ui, sans-serif;
+  --font-arcade: var(--font-display), var(--font-ui);
+}
 
-* {
-  box-sizing: border-box;
-  font-family: 'Avenir', var(--font-montserrat), sans-serif;
+/* Reserve the scrollbar's space all the time, so freezing the scroll during
+   a game or a dialog never nudges the page sideways. */
+html {
+  scrollbar-gutter: stable;
+}
+
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
-  font-family: 'Avenir', sans-serif;
   margin: 0;
-  background: linear-gradient(135deg, #0a2463 0%, #247ba0 100%);
-  color: #fff;
   min-height: 100vh;
+  font-family: var(--font-ui);
+  color: var(--foam);
+  background: linear-gradient(180deg, var(--well) 0%, #0b3470 55%, var(--ocean) 100%);
 }
 
-/* Navbar (was an inline style on #navbar) */
-#navbar {
-  background: linear-gradient(135deg, rgba(10, 36, 99, 0.95) 0%, rgba(36, 123, 160, 0.95) 100%);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
-/* Custom water gun cursor.
-   Rendered just outside the game box with position: fixed and moved with
-   transform, so moving it never triggers layout. The image is cropped to
-   the visible gun (279x285) instead of a 400x400 box that was mostly
-   transparent, so there is less to repaint without hardware acceleration. */
-.custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 279px;
-  height: 285px;
-  background-image: url('../assets/img/cursorwgun-1x.webp');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  pointer-events: none;
-  z-index: 1000;
-  display: none;
-  will-change: transform;
+a {
+  color: inherit;
 }
 
-.custom-cursor.is-visible {
+:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ---------- Navbar ---------- */
+
+/* White bar, like charity: water's own site: the logo's dark wordmark
+   needs a light background to be readable. */
+.site-nav {
+  display: flex;
+  justify-content: center;
+  padding: 14px 16px;
+  background: #fff;
+  border-bottom: 6px solid var(--yellow);
+}
+
+.site-nav-brand:focus-visible {
+  outline-color: var(--ocean);
+}
+
+.site-nav-brand {
   display: block;
+  line-height: 0;
 }
 
-.custom-cursor.is-shooting {
-  background-image: url('../assets/img/cursorwgunshoot-1x.webp');
+.site-nav-brand img {
+  width: 260px;
+  max-width: 100%;
+  height: auto;
 }
 
-.container {
-  max-width: 750px;
-  margin: 30px auto;
-  background-color: rgba(46, 157, 247, 0.3);
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(46, 157, 247, 0.3);
-  backdrop-filter: blur(10px);
-}
+/* ---------- Hero ---------- */
 
-h1 {
-  font-family: 'Avenir', var(--font-montserrat), sans-serif;
+.hero {
+  padding: 44px 0 32px;
   text-align: center;
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #FFC907;
 }
 
-#welcomeMessage {
-  color: #FFC907;
+.hero-title {
+  margin: 0;
 }
 
-#win-container {
-  display: none;
-  background-color: rgba(46, 157, 247, 0.3);
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(46, 157, 247, 0.3);
-}
-
-#win-container.is-visible {
+.hero-kicker {
   display: block;
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--aqua);
+  margin-bottom: 6px;
 }
 
-#win-header {
-  color: #FFC907;
+.hero-name {
+  display: block;
+  font-family: var(--font-arcade);
+  font-weight: 400;
+  font-size: clamp(3.1rem, 11vw, 5.75rem);
+  line-height: 0.95;
+  color: var(--yellow);
+  /* two stacked hard shadows: the "sticker" lifted off the page */
+  text-shadow:
+    0 4px 0 var(--ocean),
+    0 9px 0 var(--ink);
 }
 
-#win-text {
-  color: #ffffff;
-}
-
-h2, h3 {
-  color: #fff;
-}
-
-.game-instructions {
-  font-size: 18px;
-  margin-bottom: 1rem;
-  text-align: center;
-  color: #fff;
+.hero-text {
+  max-width: 32em;
+  margin: 22px auto 0;
+  font-size: 1.08rem;
   line-height: 1.6;
 }
 
-#stats {
-  white-space: nowrap;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  color: #FFC907;
+/* ---------- The board ---------- */
+
+.board {
+  position: relative;
+  padding: 20px;
+  background: var(--deep);
+  border: 3px solid var(--blue);
+  border-radius: 28px;
+  box-shadow: 0 10px 0 var(--ink);
+  touch-action: manipulation; /* no double tap zoom while tapping fast */
 }
 
+/* While a round runs, touches on the board never scroll or zoom the page. */
+.board.is-playing {
+  touch-action: none;
+}
+
+.playfield {
+  position: relative;
+}
+
+/* Scoreboard: fixed height cells, so changing numbers never move the grid. */
+.scoreboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.55fr 0.9fr;
+  margin-bottom: 18px;
+  padding: 10px 4px;
+  background: var(--well);
+  border-radius: 18px;
+  box-shadow: inset 0 4px 0 rgba(0, 0, 0, 0.35);
+}
+
+.score-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 2px 4px;
+}
+
+.score-cell + .score-cell {
+  border-left: 2px solid rgba(46, 157, 247, 0.25);
+}
+
+.score-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--aqua);
+}
+
+.score-value {
+  width: 100%; /* full width box: numbers change inside it, the box never moves */
+  text-align: center;
+  height: 2.4rem;
+  font-family: var(--font-arcade);
+  font-size: 2.1rem;
+  line-height: 2.4rem;
+  color: var(--yellow);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-value.is-urgent {
+  color: var(--red);
+}
+
+.score-lives {
+  font-family: var(--font-ui);
+  font-size: 1.35rem;
+  letter-spacing: -2px;
+}
+
+/* The wells the targets pop out of */
 .game-grid {
   display: flex;
   flex-wrap: wrap;
@@ -141,26 +216,28 @@ h2, h3 {
 }
 
 .grid-cell {
-  /* this disables double touch to zoom in mobile */
   touch-action: manipulation;
   flex: 0 0 calc(25% - 15px);
-  background-color: rgba(139, 209, 203, 0.3);
-  border: 2px solid #2E9DF7;
-  border-radius: 12px;
   aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #12407f 0%, var(--deep) 72%);
+  border: 3px solid var(--rim);
+  border-radius: 18px;
+  box-shadow: inset 0 6px 0 rgba(4, 18, 43, 0.45);
+  transition: border-color 0.15s ease;
 }
 
 .grid-cell:hover {
-  background-color: rgba(46, 157, 247, 0.5);
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(46, 157, 247, 0.6);
+  border-color: var(--yellow);
+}
+
+.board.is-playing .game-grid {
+  touch-action: none;
 }
 
 .water-can-wrapper {
@@ -191,7 +268,7 @@ h2, h3 {
   background-image: url('../assets/img/germ-1x.webp');
 }
 
-/* Hit feedback (was set with inline styles in script.js) */
+/* Hit feedback */
 .water-can.hit-bullseye {
   background-image: url('../assets/img/bullseye-1x.webp');
 }
@@ -206,6 +283,128 @@ h2, h3 {
 
 .water-can.hit-germ {
   background-image: url('../assets/img/germhit-1x.webp');
+}
+
+@keyframes popUp {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* "Level up" badge, stuck on the board's top edge like a sticker. It
+   floats instead of being inserted above the board, so reaching a new
+   level can't push the grid down mid game, and it never covers targets. */
+.level-flash {
+  position: absolute;
+  top: -20px; /* the board's top edge (board padding) */
+  left: 50%;
+  white-space: nowrap;
+  z-index: 5;
+  min-width: 230px;
+  padding: 14px 22px 12px;
+  text-align: center;
+  color: var(--well);
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 6px 0 var(--ink);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: levelFlash 1.8s ease-out forwards;
+}
+
+.level-flash p {
+  margin: 0;
+}
+
+.level-flash-title {
+  font-family: var(--font-arcade);
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+
+.level-flash-text {
+  font-weight: 700;
+}
+
+@keyframes levelFlash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+  22%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* "+100" score popup at the click */
+.points-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  pointer-events: none;
+  font-family: var(--font-arcade);
+  font-size: 1.9rem;
+  color: var(--yellow);
+  text-shadow: 0 3px 0 var(--ink);
+  animation: pointsFloat 0.6s ease-out forwards;
+}
+
+@keyframes pointsFloat {
+  from {
+    opacity: 1;
+    translate: -50% -100%;
+  }
+  to {
+    opacity: 0;
+    translate: -50% -180%;
+  }
+}
+
+/* ---------- Water gun cursor ----------
+   Only over the target grid, and only with a mouse or trackpad (see
+   CustomCursor.js). Moved with transform, so it never triggers layout. */
+
+.has-gun,
+.has-gun * {
+  cursor: none !important;
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 279px;
+  height: 285px;
+  background-image: url('../assets/img/cursorwgun-1x.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  will-change: transform;
+}
+
+.custom-cursor.is-visible {
+  display: block;
+}
+
+.custom-cursor.is-shooting {
+  background-image: url('../assets/img/cursorwgunshoot-1x.webp');
 }
 
 /* Sharper 2x images on high density screens. (A media query instead of
@@ -244,279 +443,571 @@ h2, h3 {
   }
 }
 
-@keyframes popUp {
-  0% {
-    transform: scale(0.5);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+/* ---------- Buttons ---------- */
 
-/* "+100" style score popup. script.js created these but style.css never
-   styled them, so they landed under the footer instead of at the click. */
-.points-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 1100;
-  color: #FFC907;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  animation: pointsFloat 0.6s ease-out forwards;
-}
-
-@keyframes pointsFloat {
-  from {
-    opacity: 1;
-    translate: -50% -100%;
-  }
-  to {
-    opacity: 0;
-    translate: -50% -180%;
-  }
-}
-
-button {
-  background-color: #2E9DF7;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  border-radius: 8px;
+.btn-arcade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 22px;
+  font-family: var(--font-arcade);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--well);
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 5px 0 var(--ink);
   cursor: pointer;
-  display: block;
-  margin: 30px auto 0;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(46, 157, 247, 0.3);
-  transform: scale(1);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background-color 0.15s ease;
 }
 
-button:hover {
-  background-color: #FFC907;
-  color: #0a2463;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 6px 20px rgba(255, 201, 7, 0.4);
-  transform: scale(1.1);
+.btn-arcade:hover {
+  background: var(--yellow-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--ink);
 }
 
-button:active {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 10px rgba(255, 201, 7, 0.3);
+.btn-arcade:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--ink);
 }
 
-/* Difficulty options are now <button>s (they were <a href="#">).
-   Undo the global button styles so they look like the old links. */
-button.dropdown-item,
-button.dropdown-item:hover,
-button.dropdown-item:active {
-  margin: 0;
-  font-weight: 400;
-  box-shadow: none;
+.btn-arcade:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
   transform: none;
-  transition: none;
+  box-shadow: 0 5px 0 var(--ink);
 }
 
-/* .h5.h5Points: the points line is now <p class="h5"> (it was an <h5>),
-   so this needs to beat Bootstrap's .h5 color to stay yellow. */
-.h5.h5Points {
-  color: #FFC907;
+.btn-arcade-small {
+  font-size: 1.1rem;
+  padding: 8px 18px;
 }
 
-#gameBox {
+.btn-outline {
+  flex: 1 1 0;
+  max-width: 190px;
+  padding: 10px 14px;
+  font-family: var(--font-arcade);
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: var(--foam);
+  background: transparent;
+  border: 3px solid var(--blue);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-outline:hover {
+  background: var(--rim);
+}
+
+.btn-outline-danger {
+  border-color: var(--red);
+}
+
+.btn-outline-danger:hover {
+  background: #c42e1c;
+}
+
+.btn-outline:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.board-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+/* ---------- Start game menu ---------- */
+
+.start-menu {
   position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
 }
 
-#gameBox * {
-  cursor: none !important;
+.btn-start {
+  min-width: 240px; /* same width for "Start game" and "Game on!" */
+  font-size: 1.65rem;
+  padding: 12px 34px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 0 var(--ink);
 }
 
-.water-facts {
-  color: #FFF6EE;
+.btn-start:hover {
+  box-shadow: 0 8px 0 var(--ink);
 }
 
-.modal-content {
-  align-content: center;
-  margin: auto;
-  max-width: 80vw;
+.btn-start.is-open {
+  background: var(--yellow-hover);
+}
+
+/* During a round the button reads "Game on!" and can't be pressed. */
+.btn-start:disabled {
+  opacity: 1;
+  color: var(--aqua);
+  background: var(--well);
+  border-color: var(--rim);
+}
+
+.start-caret {
+  transition: transform 0.15s ease;
+}
+
+.btn-start.is-open .start-caret {
+  transform: rotate(180deg);
+}
+
+.level-menu {
+  position: absolute;
+  top: calc(100% + 16px);
   left: 50%;
-  transform: translateX(-50%);
+  z-index: 1100; /* above the water gun */
+  width: min(330px, 92vw);
+  padding: 8px;
+  background: var(--well);
+  border: 3px solid var(--yellow);
+  border-radius: 22px;
+  box-shadow: 0 8px 0 var(--ink);
+  visibility: hidden;
+  opacity: 0;
+  transform: translate(-50%, -6px);
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease,
+    visibility 0s linear 0.12s;
+}
+
+.level-menu.is-open {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
+}
+
+/* little notch pointing up at the button */
+.level-menu::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: calc(50% - 9px);
+  width: 18px;
+  height: 18px;
+  background: var(--well);
+  border-top: 3px solid var(--yellow);
+  border-left: 3px solid var(--yellow);
+  border-radius: 4px 0 0 0;
+  transform: rotate(45deg);
+}
+
+.level-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "name stats"
+    "note stats";
+  align-items: center;
+  width: 100%;
+  padding: 10px 14px 10px 44px;
+  text-align: left;
+  color: var(--foam);
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.level-option + .level-option {
+  margin-top: 4px;
+}
+
+.level-option:hover,
+.level-option:focus-visible {
+  background: var(--deep);
+}
+
+.level-option:focus-visible {
+  outline-offset: -3px;
+}
+
+/* colored pip: green easy, yellow medium, red hard */
+.level-option::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: calc(50% - 8px);
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+}
+
+.level-easy::before {
+  background: var(--green);
+}
+
+.level-medium::before {
+  background: var(--yellow);
+}
+
+.level-hard::before {
+  background: var(--red);
+}
+
+.level-name {
+  grid-area: name;
+  font-family: var(--font-arcade);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.level-note {
+  grid-area: note;
+  font-size: 0.82rem;
+  color: var(--aqua);
+}
+
+.level-stats {
+  grid-area: stats;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.level-time {
+  font-family: var(--font-arcade);
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--yellow);
+}
+
+.level-lives {
+  font-size: 0.78rem;
+  letter-spacing: -2px;
+}
+
+/* ---------- Water facts ---------- */
+
+.panel {
+  margin: 44px 0 0;
+  padding: 30px 28px;
   text-align: center;
+  background: var(--deep);
+  border: 3px solid var(--rim);
+  border-radius: 24px;
+  box-shadow: 0 8px 0 var(--ink);
 }
 
-.modal-title {
-  color: #FFC907;
+.facts-heading {
+  margin: 0 0 14px;
+  font-family: var(--font-arcade);
+  font-size: 2.3rem;
+  font-weight: 400;
+  color: var(--yellow);
 }
 
-/* Custom modal background and text color for gameModal */
+.facts-quote {
+  max-width: 34em;
+  margin: 0 auto 24px;
+  font-size: 1.2rem;
+  line-height: 1.55;
+}
+
+.facts-quote p {
+  margin: 0;
+}
+
+.facts-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.points-pill {
+  margin: 0;
+  padding: 8px 18px;
+  font-weight: 700;
+  color: var(--aqua);
+  background: var(--well);
+  border-radius: 999px;
+}
+
+.points-pill span {
+  margin-left: 6px;
+  font-family: var(--font-arcade);
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--yellow);
+}
+
+/* ---------- Dialog ---------- */
+
+.modal-backdrop.show {
+  opacity: 0.75;
+  background: var(--well);
+}
+
 #gameModal .modal-content {
-  background: linear-gradient(135deg, #0a2463 0%, #247ba0 100%) !important;
-  color: #fff !important;
-  border: none;
-  box-shadow: 0 4px 20px rgba(10, 36, 99, 0.3);
+  color: var(--foam);
+  background: var(--deep);
+  border: 3px solid var(--yellow);
+  border-radius: 24px;
+  box-shadow: 0 10px 0 var(--ink);
 }
 
 #gameModal .modal-header,
 #gameModal .modal-footer {
   border: none;
-  background: transparent;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+#gameModal .modal-body {
+  padding: 8px 24px;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+#gameModal .modal-title {
+  font-family: var(--font-arcade);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--yellow);
 }
 
 #gameModal .btn-close {
   filter: invert(1);
+  opacity: 0.85;
 }
 
 #gameModal .rules-list {
+  margin: 0;
+  padding-left: 1.2em;
   text-align: left;
-  font-size: 1.1em;
-  line-height: 1.7;
-  margin-left: 1em;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-  font-weight: inherit;
-  font-size: inherit;
-  font-style: inherit;
-}
-
-/* Responsive and centered navbar logo */
-.navbar-brand {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.navbar-brand img {
-  max-width: 320px;
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.difficulty-dropdown {
-  min-width: 220px;
-  max-width: 320px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-#difficulty-group .dropdown-menu {
-  min-width: 220px;
-  max-width: 320px;
-  text-align: center;
-}
-
-footer {
-  background: transparent;
-  border-radius: 18px 18px 0 0;
-  padding-bottom: 24px;
-}
-
-.footer-section a {
-  color: #FFC907;
-  margin: 0 10px;
-}
-
-#social-links {
-  color: #FFC907;
-}
-
-/* Font Awesome icons are now react-icons SVGs. This matches how the
-   icon font sat on the text baseline. */
-.fa-icon {
-  display: inline-block;
-  height: 1em;
-  width: auto;
-  vertical-align: -0.125em;
-}
-
-/* Footer headings are now <h2 class="h6"> (they were <h6>) so the
-   heading order is valid. These selectors keep them looking the same. */
-.footer-section,
-.footer-section p,
-.footer-section a,
-.footer-section span,
-.footer-section h6,
-.footer-section .h6 {
-  font-size: 18px;
-  font-weight: 400;
-  color: #f6f6f6;
   line-height: 1.6;
 }
 
-#footerBodyTxt {
-  font-weight: 400;
+#gameModal .rules-list li + li {
+  margin-top: 6px;
 }
 
-.footer-section h6,
-.footer-section .h6 {
-  font-size: 18px;
-  font-weight: 400;
-  color: #f6f6f6;
+/* ---------- Footer ---------- */
+
+.footer-section {
+  margin-top: 64px;
+  padding: 0 16px 36px;
+  background: var(--well);
+  border-top: 4px solid var(--yellow);
 }
 
-.footer-section a {
-  color: #f6f6f6;
-  text-decoration: none;
-  font-weight: 400;
+.social-row {
+  border-bottom: 1px solid rgba(139, 209, 203, 0.2);
 }
 
-.footer-section a:hover,
-.footer-section a:focus {
-  color: #FFC907;
+.social-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 20px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 18px 0;
+}
+
+.social-label {
+  color: var(--aqua);
+  font-weight: 700;
+}
+
+.social-icons {
+  display: flex;
+  gap: 6px;
+}
+
+.social-link {
+  display: inline-flex;
+  padding: 10px;
+  font-size: 1.25rem;
+  color: var(--foam);
+  border-radius: 10px;
+}
+
+.social-link:hover {
+  color: var(--yellow);
+}
+
+.fa-icon {
+  display: inline-block;
+  flex: none;
+  height: 1em;
+  width: auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.3fr;
+  gap: 32px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding-top: 32px;
+}
+
+.footer-col p {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.footer-col a {
   text-decoration: underline;
-  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(242, 248, 255, 0.35);
   text-underline-offset: 4px;
-  text-decoration-color: #FFC907;
 }
 
-.underlineFix {
-  text-decoration: none !important;
+.footer-col a:hover {
+  color: var(--yellow);
+  text-decoration-color: var(--yellow);
 }
+
+.footer-heading {
+  margin: 0 0 12px;
+  font-family: var(--font-arcade);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--yellow);
+}
+
+.footer-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+#footerLogo {
+  width: auto;
+  height: 56px;
+}
+
+.footer-title {
+  font-family: var(--font-arcade);
+  font-size: 1.7rem;
+  color: var(--yellow);
+}
+
+.contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.contact-row .fa-icon {
+  color: var(--aqua);
+  transform: translateY(2px);
+}
+
+/* ---------- Short screens (laptops) ----------
+   Smaller wells so the whole board, Pause and Reset included, fits on
+   screen while a round holds the page still. */
+
+@media (min-width: 601px) and (max-height: 880px) {
+  .game-grid {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 601px) and (max-height: 760px) {
+  .game-grid {
+    max-width: 420px;
+  }
+
+  .scoreboard {
+    margin-bottom: 12px;
+  }
+
+  .start-menu {
+    margin-top: 16px;
+  }
+}
+
+/* ---------- Phones ---------- */
 
 @media (max-width: 600px) {
-  #lives {
-    padding-top: 20px;
+  .hero {
+    padding: 30px 0 24px;
   }
 
-  .container {
-    margin-left: 10px;
-    margin-right: 10px;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  #stats {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
-  .stats-column {
-    font-weight: 500;
-    color: #FFC907;
-    text-align: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .modal-content {
-    max-width: 98vw;
-    padding: 1rem;
+  .hero-text {
     font-size: 1rem;
-    text-align: center;
   }
 
-  .navbar-brand img {
-    max-width: 140px;
+  .board {
+    padding: 12px;
+    border-radius: 22px;
+  }
+
+  .level-flash {
+    top: -12px;
+    min-width: 0;
+    padding: 10px 18px 8px;
+  }
+
+  .level-flash-title {
+    font-size: 1.4rem;
+  }
+
+  .level-flash-text {
+    font-size: 0.85rem;
+  }
+
+  .scoreboard {
+    grid-template-columns: 1fr 1fr 1.45fr 0.85fr;
+    margin-bottom: 12px;
+    padding: 8px 2px;
+  }
+
+  .score-label {
+    font-size: 0.72rem;
+  }
+
+  .score-value {
+    height: 2rem;
+    font-size: 1.6rem;
+    line-height: 2rem;
+  }
+
+  .score-lives {
+    font-size: 0.95rem;
+    letter-spacing: -3px;
+  }
+
+  .game-grid {
+    gap: 10px;
+  }
+
+  .grid-cell {
+    flex-basis: calc(25% - 10px);
+    border-radius: 14px;
   }
 
   .water-can-wrapper {
@@ -525,31 +1016,69 @@ footer {
   }
 
   .water-can {
-    width: 100%;
-    height: 100%;
     background-size: contain;
   }
 
-  .water-can.clean,
-  .water-can.dirty {
-    background-size: contain;
+  .btn-start {
+    min-width: 210px;
+    font-size: 1.4rem;
+  }
+
+  .btn-outline {
+    font-size: 0.98rem;
+    padding: 10px 8px;
+  }
+
+  .panel {
+    padding: 24px 18px;
+  }
+
+  .facts-heading {
+    font-size: 1.9rem;
+  }
+
+  .facts-quote {
+    font-size: 1.08rem;
+  }
+
+  .site-nav-brand img {
+    width: 160px;
+  }
+
+  .social-label {
+    display: none;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
-.footer-section .footer-title {
-  color: #FFC907;
-  font-size: clamp(1rem, 3vh, 5rem);
+@media (prefers-reduced-motion: reduce) {
+  .water-can,
+  .points-popup {
+    animation-duration: 0.01s;
+  }
+
+  .level-flash {
+    animation-name: levelFade;
+  }
+
+  .level-menu,
+  .level-menu.is-open,
+  .start-caret,
+  .btn-arcade {
+    transition: none;
+  }
 }
 
-#footerLogo {
-  height: clamp(2rem, 12vh, 10rem);
-  width: auto;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
-  padding: 0;
-}
-
-.footer-logo-row {
-  gap: 0.5rem;
+@keyframes levelFade {
+  0%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

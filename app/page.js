@@ -5,17 +5,16 @@ import GameArea from "@/components/GameArea";
 export default function Home() {
   return (
     <main>
-      <div className="container text-center">
-        <h1 id="welcomeMessage">Welcome to Aqua Blaster!</h1>
-        <p className="game-instructions mt-3 mb-1">
-          <span id="splash-txt">
-            You Have 30 Seconds to hit as many targets as possible!
-            <br />
-            the closer to center you are the more points you get
-            <br /> and beware of Dirty Water
-          </span>
+      <header className="hero">
+        <h1 id="welcomeMessage" className="hero-title">
+          <span className="hero-kicker">Welcome to</span>
+          <span className="hero-name">Aqua Blaster!</span>
+        </h1>
+        <p className="hero-text" id="splash-txt">
+          You have 30 seconds to hit as many targets as you can. The closer to the center, the more points you get. And
+          beware of dirty water.
         </p>
-      </div>
+      </header>
 
       <GameArea />
     </main>

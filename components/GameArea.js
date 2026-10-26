@@ -11,6 +11,7 @@ import DifficultyMenu from "./DifficultyMenu";
 import GameModal from "./GameModal";
 import WaterFacts from "./WaterFacts";
 import { FACTS, FIRST_FACT } from "@/lib/facts";
+import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 import { playSound } from "@/lib/sounds";
 import {
   DIFFICULTIES,
@@ -20,6 +21,7 @@ import {
   GAME_TIME,
   GRID_CELLS,
   HIT_FEEDBACK_MS,
+  LEVEL_FLASH_MS,
   POINTS_PER_LEVEL,
   POPUP_MS,
   RINGS,
@@ -32,7 +34,7 @@ const HOW_TO_PLAY = {
   body: (
     <ul className="rules-list">
       <li>
-        <strong>Hit as many Jerry-Can targets as possible in 30 seconds!</strong>
+        <strong>Hit as many jerry can targets as possible before time runs out!</strong>
       </li>
       <li>The closer to the center you hit, the more points you get.</li>
       <li>
@@ -47,8 +49,8 @@ const HOW_TO_PLAY = {
       <li>The game also ends when the timer runs out.</li>
       <li>Try to get the highest score you can. Good luck and have fun!</li>
       <li>
-        One last thing, if your having trouble hitting the targets, make sure your <strong> clicking, not holding</strong>{" "}
-        left mouse click
+        One last thing: if you&apos;re having trouble hitting the targets, make sure you&apos;re{" "}
+        <strong>clicking, not holding</strong> the left mouse button.
       </li>
     </ul>
   ),
@@ -56,6 +58,8 @@ const HOW_TO_PLAY = {
 
 export default function GameArea() {
   const gameBoxRef = useRef(null);
+  const playfieldRef = useRef(null); // scoreboard + grid: what must stay on screen
+  const gridRef = useRef(null);
   const nextId = useRef(0);
 
   // Game state
@@ -73,6 +77,7 @@ export default function GameArea() {
   const [level, setLevel] = useState(0);
   const [cachePoints, setCachePoints] = useState(0);
   const [fact, setFact] = useState(FIRST_FACT);
+  const [levelFlash, setLevelFlash] = useState(null); // { id, level } while the "Level up" badge shows
 
   // Modal: null or { kind, title, body, confirmLabel }
   const [modal, setModal] = useState(null);
@@ -141,6 +146,18 @@ export default function GameArea() {
     return () => clearInterval(timer);
   }, [running, endGame]);
 
+  // Hold the screen still while a round is running. The page can't be
+  // scrolled until the game ends, is paused, or a dialog opens. Skipped if
+  // the whole board (including Pause and Reset) doesn't fit on screen, for
+  // example a phone held sideways, since then the player needs to scroll.
+  useEffect(() => {
+    if (!running) return;
+    const board = gameBoxRef.current;
+    if (!board || board.offsetHeight > window.innerHeight) return;
+    lockScroll("game");
+    return () => unlockScroll("game");
+  }, [running]);
+
   // Spawning, at the chosen difficulty's rate (also after a resume).
   useEffect(() => {
     if (!running) return;
@@ -148,8 +165,24 @@ export default function GameArea() {
     return () => clearInterval(spawner);
   }, [running, spawnRate, spawnTarget]);
 
+  // Scroll so the whole board sits in the middle of the screen (or, if it
+  // is taller than the screen, at least the scoreboard and grid). Instant
+  // on purpose: cheap without hardware acceleration, and the board is in
+  // place before the first target appears.
+  function frameBoard() {
+    const board = gameBoxRef.current;
+    const playfield = playfieldRef.current;
+    if (!board || !playfield) return;
+    const fits = board.offsetHeight <= window.innerHeight;
+    const rect = (fits ? board : playfield).getBoundingClientRect();
+    const spare = window.innerHeight - rect.height;
+    const top = window.scrollY + rect.top - Math.max(spare / 2, 8);
+    window.scrollTo({ top: Math.max(0, top), behavior: "instant" });
+  }
+
   function startGame(choice) {
     if (gameActive) return;
+    frameBoard();
     const settings = DIFFICULTIES[choice];
     setDifficulty(choice);
     setScore(0);
@@ -202,7 +235,13 @@ export default function GameArea() {
     const newTotal = totalPoints + ring.points;
     setTotalPoints(newTotal);
     const newLevel = Math.floor(newTotal / POINTS_PER_LEVEL);
-    if (newLevel > level) setLevel(newLevel);
+    if (newLevel > level) {
+      setLevel(newLevel);
+      // The badge floats over the board, so it never pushes the grid down.
+      const flashId = ++nextId.current;
+      setLevelFlash({ id: flashId, level: newLevel });
+      setTimeout(() => setLevelFlash((current) => (current && current.id === flashId ? null : current)), LEVEL_FLASH_MS);
+    }
 
     playSound("correct");
     setTarget({ ...target, hit: ring.hit });
@@ -216,7 +255,7 @@ export default function GameArea() {
     setModal({
       kind: "pause",
       title: "Game Paused",
-      body: "You paused the game. Click Resume Game to continue.",
+      body: "You paused the game. Close this to keep playing.",
     });
   }
 
@@ -259,69 +298,87 @@ export default function GameArea() {
 
   return (
     <>
-      <div id="win-container" className={`container text-center${level > 0 ? " is-visible" : ""}`}>
-        <h2 id="win-header" className="h1">
-          {level > 0 ? `🎉 Level Up! +${level}` : ""}
-        </h2>
-        <p id="win-text">{level > 0 ? `You're currently at Level ${level}!` : ""}</p>
-      </div>
-
-      <div id="gameBox" ref={gameBoxRef} className="container align-items-center">
-        <div className="container text-center mt-1 col-9">
-          <div id="stats" className="row align-items-center justify-content-center align-content-center">
-            <div className="stats-column col">
-              <p className="h5">
-                Score: <span id="score">{score}</span>
-              </p>
+      <section
+        id="gameBox"
+        ref={gameBoxRef}
+        className={`board${running ? " is-playing" : ""}`}
+        aria-label="Aqua Blaster game"
+      >
+        <div className="playfield" ref={playfieldRef}>
+          <div id="stats" className="scoreboard">
+            <div className="score-cell">
+              <span className="score-label">Score</span>
+              <span id="score" className="score-value">
+                {score}
+              </span>
             </div>
-            <div className="stats-column col">
-              <p className="h5">
-                Time: <span id="time">{timeLeft}s</span>
-              </p>
+            <div className="score-cell">
+              <span className="score-label">Time</span>
+              <span id="time" className={`score-value${gameActive && timeLeft <= 5 ? " is-urgent" : ""}`}>
+                {timeLeft}s
+              </span>
             </div>
-            <div className="stats-column col">
-              <p className="h5">
-                Lives: <span id="lives">{"💧".repeat(Math.max(0, lives))}</span>
-              </p>
+            <div className="score-cell score-cell-lives">
+              <span className="score-label">Lives</span>
+              <span id="lives" className="score-value score-lives" aria-label={`${Math.max(0, lives)} lives`}>
+                {"💧".repeat(Math.max(0, lives))}
+              </span>
+            </div>
+            <div className="score-cell">
+              <span className="score-label">Level</span>
+              <span id="level" className="score-value">
+                {level}
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="game-grid">
-          {Array.from({ length: GRID_CELLS }, (_, cell) => (
-            <div key={cell} className="grid-cell">
-              {target && target.cell === cell && (
-                // key = target id, so every new target remounts and replays the pop in animation
-                <div key={target.id} className="water-can-wrapper">
-                  <div
-                    className={`water-can ${target.dirty ? "dirty" : "clean"}${target.hit ? ` hit-${target.hit}` : ""}`}
-                    onClick={handleTargetClick}
-                  />
-                </div>
-              )}
+          <div className="game-grid" ref={gridRef}>
+            {Array.from({ length: GRID_CELLS }, (_, cell) => (
+              <div key={cell} className="grid-cell">
+                {target && target.cell === cell && (
+                  // key = target id, so every new target remounts and replays the pop in animation
+                  <div key={target.id} className="water-can-wrapper">
+                    <div
+                      className={`water-can ${target.dirty ? "dirty" : "clean"}${target.hit ? ` hit-${target.hit}` : ""}`}
+                      onClick={handleTargetClick}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {levelFlash && (
+            <div key={levelFlash.id} id="win-container" className="level-flash" role="status">
+              <p id="win-header" className="level-flash-title">
+                🎉 Level up! +{levelFlash.level}
+              </p>
+              <p id="win-text" className="level-flash-text">
+                You&apos;re at level {levelFlash.level}
+              </p>
             </div>
-          ))}
+          )}
         </div>
 
-        <DifficultyMenu onSelect={startGame} />
+        <DifficultyMenu onSelect={startGame} disabled={gameActive} />
 
-        <div className="d-grid gap-4 d-flex justify-content-center">
-          <button className="button btn btn-primary col-3" id="pause-game" type="button" onClick={pauseGame}>
-            {isPaused ? "Resume Game" : "Pause Game"}
+        <div className="board-actions">
+          <button className="btn-outline" id="pause-game" type="button" onClick={pauseGame} disabled={!gameActive}>
+            {isPaused ? "Resume game" : "Pause game"}
           </button>
           <button
-            className="button btn btn-primary col-3"
+            className="btn-outline"
             id="how-to-play"
             type="button"
             onClick={() => setModal({ kind: "info", ...HOW_TO_PLAY })}
           >
-            How to Play
+            How to play
           </button>
-          <button className="button btn btn-primary col-3" id="reset-game" type="button" onClick={resetGame}>
-            Reset Game
+          <button className="btn-outline btn-outline-danger" id="reset-game" type="button" onClick={resetGame}>
+            Reset game
           </button>
         </div>
-      </div>
+      </section>
 
       <WaterFacts fact={fact} points={cachePoints} onNewFact={newFact} cost={FACT_COST} />
 
@@ -333,7 +390,7 @@ export default function GameArea() {
         </div>
       ))}
 
-      <CustomCursor areaRef={gameBoxRef} />
+      <CustomCursor areaRef={gridRef} />
     </>
   );
 }

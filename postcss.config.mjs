@@ -8,7 +8,19 @@ const purgecss = {
   "@fullhuman/postcss-purgecss": {
     content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}", "./lib/**/*.{js,jsx}"],
     safelist: {
-      standard: ["show", "fade", "modal-open", "is-visible", "is-shooting", /^hit-/],
+      standard: [
+        "show",
+        "fade",
+        "is-visible",
+        "is-shooting",
+        "is-open",
+        "is-playing",
+        "is-urgent",
+        "has-gun",
+        "scroll-locked",
+        /^hit-/,
+        /^level-/,
+      ],
       greedy: [/data-bs-popper/],
     },
     keyframes: false,

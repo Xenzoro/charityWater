@@ -33,13 +33,13 @@ const SITE_LINKS = [
 // Server component: the footer is static, so it ships no JavaScript.
 export default function Footer() {
   return (
-    <footer className="footer-section text-center text-lg-start">
-      <section id="social-links" className="d-flex justify-content-center p-4">
-        <div className="d-flex flex-wrap justify-content-center align-items-center gap-4 py-3">
-          <span id="getConnected" className="d-none d-lg-inline">
-            Get connected with us on social networks:
+    <footer className="footer-section">
+      <section id="social-links" className="social-row">
+        <div className="social-inner">
+          <span id="getConnected" className="social-label">
+            Get connected with us on social networks
           </span>
-          <div>
+          <div className="social-icons">
             {SOCIAL_LINKS.map(({ href, label, Icon }) => (
               <a
                 key={href}
@@ -47,7 +47,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`charity: water on ${label}`}
-                className="underlineFix me-4 text-reset"
+                className="social-link"
               >
                 <Icon className="fa-icon" aria-hidden="true" />
               </a>
@@ -56,76 +56,72 @@ export default function Footer() {
         </div>
       </section>
 
-      <section>
-        <div className="container text-center text-md-start mt-5">
-          <div className="row mt-3">
-            <div className="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-              <div className="footer-logo-row d-flex align-items-center justify-content-center justify-content-md-start mb-2">
-                <Image
-                  id="footerLogo"
-                  src={footerLogo}
-                  alt="Charity: Water logo only"
-                  sizes="160px"
-                />
-                <span className="footer-title">charity: water</span>
-              </div>
-              <p id="footerBodyTxt">
-                All sound effects are copyright free and sourced from YouTube Audio Library.
-                Game developed by Jacob Martinez as a project.
-                <br />
-                Art crafted by my amazing girlfriend,{" "}
-                <span id="footerTxt">
-                  <a
-                    href="https://www.instagram.com/bheofthelily?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                    className="text-reset"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    KZ.
-                  </a>
-                </span>
-              </p>
+      <section className="footer-main">
+        <div className="footer-grid">
+          <div className="footer-col footer-about">
+            <div className="footer-logo-row">
+              <Image
+                id="footerLogo"
+                src={footerLogo}
+                alt="Charity: Water logo only"
+                sizes="160px"
+              />
+              <span className="footer-title">charity: water</span>
             </div>
+            <p id="footerBodyTxt">
+              All sound effects are copyright free and sourced from YouTube Audio Library.
+              Game developed by Jacob Martinez as a project.
+              <br />
+              Art crafted by my amazing girlfriend,{" "}
+              <span id="footerTxt">
+                <a
+                  href="https://www.instagram.com/bheofthelily?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  KZ.
+                </a>
+              </span>
+            </p>
+          </div>
 
-            <div className="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-              <h2 className="h6 text-uppercase mb-4">See What We&apos;re About</h2>
-              {SITE_LINKS.map(({ href, label }) => (
-                <p key={href}>
-                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-reset">
-                    {label}
-                  </a>
-                </p>
-              ))}
-            </div>
-
-            <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-              <h2 className="h6 text-uppercase mb-4">Contact</h2>
-              <p>
-                <span className="me-3">
-                  <FaHandshake className="fa-icon" aria-hidden="true" />{" "}
-                  <a href="https://www.charitywater.org/contact" target="_blank" rel="noopener noreferrer" className="text-reset">
-                    Connect
-                  </a>
-                </span>
-              </p>
-              <p>
-                <a href="https://maps.app.goo.gl/7W9Gjbf9aT7f6whM6" target="_blank" rel="noopener noreferrer" className="text-reset">
-                  {" "}
-                  <FaHome className="fa-icon me-3" aria-hidden="true" />
-                  230 Franklin Rd Suite 11ii, Franklin, TN 37064
+          <div className="footer-col">
+            <h2 className="footer-heading">See what we&apos;re about</h2>
+            {SITE_LINKS.map(({ href, label }) => (
+              <p key={href}>
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  {label}
                 </a>
               </p>
-              <p>
-                <FaEnvelope className="fa-icon me-3" aria-hidden="true" />
-                info@charitywater.org
-              </p>
-              <p>
-                <FaClock className="fa-icon me-3" aria-hidden="true" /> Mon-Fri 8:30 a.m. - 5:00 p.m. ET
-              </p>
-              <p>
-                <FaPhone className="fa-icon me-3" aria-hidden="true" /> 646-688-2323
-              </p>
-            </div>
+            ))}
+          </div>
+
+          <div className="footer-col">
+            <h2 className="footer-heading">Contact</h2>
+            <p className="contact-row">
+              <FaHandshake className="fa-icon" aria-hidden="true" />
+              <a href="https://www.charitywater.org/contact" target="_blank" rel="noopener noreferrer">
+                Connect
+              </a>
+            </p>
+            <p className="contact-row">
+              <FaHome className="fa-icon" aria-hidden="true" />
+              <a href="https://maps.app.goo.gl/7W9Gjbf9aT7f6whM6" target="_blank" rel="noopener noreferrer">
+                230 Franklin Rd Suite 11ii, Franklin, TN 37064
+              </a>
+            </p>
+            <p className="contact-row">
+              <FaEnvelope className="fa-icon" aria-hidden="true" />
+              info@charitywater.org
+            </p>
+            <p className="contact-row">
+              <FaClock className="fa-icon" aria-hidden="true" />
+              Mon-Fri 8:30 a.m. - 5:00 p.m. ET
+            </p>
+            <p className="contact-row">
+              <FaPhone className="fa-icon" aria-hidden="true" />
+              646-688-2323
+            </p>
           </div>
         </div>
       </section>
