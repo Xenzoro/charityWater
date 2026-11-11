@@ -19,3 +19,5 @@ The XenHub copy clash: c96182c2 had already brought every line of the old repo's
 merge that keeps main's files and has the old repo's tip as its second parent lets the copy add on again (tested
 locally with xen-main-copy: it adds on, and the files match XenHub's folder). Not pushed, since this round was
 told to stop.
+
+The planning chat (claude-ba) wasn't in ListAgents, so it wasn't told.
